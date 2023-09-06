@@ -1,14 +1,16 @@
-FROM node:16.14.0
+FROM node:16
 
-# Create app directory
-WORKDIR /usr/src/app
-# copy
-COPY . .
+WORKDIR /app
+COPY package.json .
 
-RUN npm install
-# If you are building your code for production
-# RUN npm ci --only=production
+ARG NODE_ENV
 
+RUN if [ "$NODE_ENV" = "development" ]; \
+        then npm install; \
+        else npm install --only=production; \
+        fi
 
-EXPOSE 9000
-CMD ["npm", "start"]
+COPY . ./
+ENV PORT 4000
+EXPOSE $PORT
+CMD ["node", "app.js"]
